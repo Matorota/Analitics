@@ -43,6 +43,49 @@ Shows most important numbers and comparisons for the data
 - seaborn (statistical visualization)
 - Virtual environment recommended
 
+# GETTING STARTED FROM SCRATCH
+
+To start this project on a new PC from Git:
+
+## Step 1: Clone the Repository
+
+```bash
+git clone <your-repo-url>
+cd Analitics-python
+```
+
+## Step 2: Create Virtual Environment
+
+```bash
+# Windows
+python -m venv .venv
+.venv\Scripts\activate
+
+# Mac/Linux
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+## Step 3: Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+## Step 4: Run the Project
+
+```bash
+python run.py
+```
+
+## Step 5: Verify Everything Works
+
+```bash
+python tests/test.py
+```
+
+That's it! The database will auto-generate on first run.
+
 # TIPS FOR BEST EXPERIENCE
 
 1. View charts on a large screen for better readability
