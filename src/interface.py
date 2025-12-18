@@ -1,5 +1,9 @@
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend for Linux/WSL
 import matplotlib.pyplot as plt
 import sys
+import os
+import subprocess
 
 class InteractiveInterface:
     """Interactive menu-based interface for navigating charts"""
@@ -73,19 +77,48 @@ class InteractiveInterface:
                 break
     
     def display_chart(self, chart_index):
-        """Display selected chart"""
+        """Display selected chart and save as PNG"""
         chart_name, chart_method = self.chart_methods[chart_index]
         
         print(f"\nLoading: {chart_name}...")
         
         try:
+            # Create output directory if it doesn't exist
+            output_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'output')
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # Generate chart
             fig = chart_method()
             
             # Improve figure appearance
             fig.suptitle('ANALYTICS DASHBOARD', fontsize=16, fontweight='bold', y=0.98)
             
             plt.tight_layout()
-            plt.show()
+            
+            # Save chart as PNG
+            filename = f"chart_{chart_index + 1}.png"
+            filepath = os.path.join(output_dir, filename)
+            plt.savefig(filepath, dpi=300, bbox_inches='tight', facecolor='white')
+            print(f"✓ Chart saved: {filepath}")
+            
+            # Try to open with default image viewer
+            try:
+                if os.path.exists('/mnt/c/Windows/System32/cmd.exe'):  # WSL
+                    # Convert WSL path to Windows path
+                    windows_path = subprocess.check_output(['wslpath', '-w', filepath]).decode().strip()
+                    subprocess.Popen(['cmd.exe', '/c', 'start', windows_path], 
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    print(f"✓ Opening chart in Windows default viewer...")
+                else:  # Native Linux
+                    subprocess.Popen(['xdg-open', filepath], 
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    print(f"✓ Opening chart with default viewer...")
+            except Exception:
+                print(f"  (View the chart manually at: {filepath})")
+            
+            plt.close(fig)
+            
+            input("\nPress Enter to return to menu...")
             
         except Exception as e:
             print(f"ERROR displaying chart: {str(e)}")
